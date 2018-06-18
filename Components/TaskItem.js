@@ -13,7 +13,7 @@ class TaskItem extends React.Component {
 				<TouchableOpacity onPress={() => sendTaskTo() }>
 	          		<Icon
 	          			name='ios-radio-button-off'
-	          			size={60}
+	          			size={50}
 	          			color={Color.textColor} />
       			</TouchableOpacity>
 				<View style={styles.text_container}>
@@ -37,11 +37,11 @@ const styles = StyleSheet.create({
 	},
 	title_text: {
 		color: Color.textColor,
-		fontSize: 22
+		fontSize: 22,
 	},
 	description_text: {
 		color: Color.subTextColor,
-		fontSize: 20
+		fontSize: 20,
 	},
 })
 

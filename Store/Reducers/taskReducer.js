@@ -2,6 +2,7 @@ const initialState = { tasks: [] }
 
 function toggleTask(state = initialState, action) {
 	let nextState
+	const taskIndex = state.tasks.findIndex(item => item.id === action.value.id)
 
 	switch (action.type) {
 		case 'ADD_TASK':
@@ -11,7 +12,6 @@ function toggleTask(state = initialState, action) {
 			}
 			return nextState || state
 		case 'REMOVE_TASK':
-			const taskIndex = state.tasks.findIndex(item => item.id === action.value.id)
 			if (taskIndex !== -1) {
 				nextState = {
 					...state,
@@ -19,23 +19,14 @@ function toggleTask(state = initialState, action) {
 				}
 			}
 			return nextState || state
-		// case 'UPDATE_TASK':
-		// 	const taskIndex = state.tasks.findIndex(item => item.id === action.value.id)
-		// 	if (taskIndex !== -1) {
-		// 		const taskToUpdate = state.tasks[taskIndex]
-		// 		const taskUpdated = {
-		// 			...taskToUpdate,
-		// 			...action.value
-		// 		}
-		// 		return {
-		// 			...state
-		// 		}
-		// 		nextState = {
-		// 			...state,
-		// 			tasks: [...state.tasks, action.value]
-		// 		}
-		// 	}
-		// 	return state
+		case 'UPDATE_TASK':
+			if (taskIndex !== -1) {
+				nextState = {
+					...state,
+					tasks: state.tasks.map((item) => item.id === action.value.id ? {...item, ...action.value} : item )
+				}
+			}
+			return nextState || state
 		default:
 			return state
 	}
