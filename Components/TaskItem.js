@@ -1,16 +1,25 @@
 import React from 'react'
 import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native'
 
+import Icon from 'react-native-vector-icons/Ionicons'
+
+import Color from '../Helpers/Color'
+
 class TaskItem extends React.Component {
 	render() {
-		const { task } = this.props
+		const { task, displayDetailForTask, sendTaskTo } = this.props
 		return (
-			<TouchableOpacity style={styles.main_container}>
-				<Text style={styles.title_text}>{task.title}</Text>
-				<Text style={styles.default_text}>{task.hashTags.map((hashtag) => {
-					return hashtag
-				}).join(' ')}
-				</Text>
+			<TouchableOpacity style={styles.main_container} onPress={() => displayDetailForTask(task.id)}>
+				<TouchableOpacity onPress={() => sendTaskTo() }>
+	          		<Icon
+	          			name='ios-radio-button-off'
+	          			size={60}
+	          			color={Color.textColor} />
+      			</TouchableOpacity>
+				<View style={styles.text_container}>
+					<Text style={styles.title_text}>{task.title}</Text>
+					<Text style={styles.description_text}>{task.description}</Text>
+				</View>
 			</TouchableOpacity>
 		)
 	}
@@ -18,14 +27,21 @@ class TaskItem extends React.Component {
 
 const styles = StyleSheet.create({
 	main_container: {
-		height: 100,
-		flexDirection: 'row'
+		flexDirection: 'row',
+		backgroundColor: Color.backgroundColor,
+		alignItems: 'center',
+		padding: 15,
+	},
+	text_container: {
+		marginLeft: 15,
 	},
 	title_text: {
-		color: '#9296A0'
+		color: Color.textColor,
+		fontSize: 22
 	},
-	default_text: {
-		color: '#B5B6C1'
+	description_text: {
+		color: Color.subTextColor,
+		fontSize: 20
 	},
 })
 
