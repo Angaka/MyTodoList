@@ -36,7 +36,7 @@ class TaskDetail extends React.Component {
 	  	this.state = {
 	  		task: {
 		  		id: uuidv1(uuidOptions),
-				status: this.props.navigation.state.params.isNewTask ? 'NEW' : 'UPDATED'
+				isDone: false
   			},
 	  		isLoading: true,
 	  	};
@@ -67,7 +67,7 @@ class TaskDetail extends React.Component {
 
 	_addOrUpdateTask() {
 		// console.log('task : ', this.state.task);
-		const action = { type: this.props.navigation.state.params.isNewTask ? 'ADD_TASK' : 'UPDATE_TASK', value: this.state.task }
+		const action = { type: 'TOGGLE_TASK', value: this.state.task }
 		this.props.dispatch(action)
 	}
 

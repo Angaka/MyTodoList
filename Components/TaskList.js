@@ -4,7 +4,6 @@ import { StyleSheet, FlatList } from 'react-native'
 import TaskItem from './TaskItem'
 
 class TaskList extends React.Component {
-
 	constructor(props) {
 	  super(props);
 	
@@ -18,17 +17,18 @@ class TaskList extends React.Component {
 		this.props.navigation.navigate('TaskDetail', { taskId: taskId })
 	}
 
-	_sendTaskTo() {
-		console.log('SendTaskTo');
-	}
-
 	render() {
+		const { tasks, sendTaskTo, deleteTask } = this.props
+		console.log('tasks', this.props.tasks);
 		return (
 			<FlatList
 				style={styles.list_container}
 				data={this.props.tasks}
 				keyExtractor={(item) => item.id.toString()}
-				renderItem={({item}) => <TaskItem task={item} displayDetailForTask={this._displayDetailForTask} sendTaskTo={this._sendTaskTo}/>}
+				renderItem={({item}) => <TaskItem task={item} 
+					displayDetailForTask={this._displayDetailForTask} 
+					sendTaskTo={sendTaskTo} 
+					deleteTask={deleteTask}/>}
 				onEndReachedThreshold={0.5}
 				onEndReached={() => {
 					console.log('onEndReached');

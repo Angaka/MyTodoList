@@ -1,16 +1,23 @@
 import React from 'react'
-import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native'
 
+import { StyleSheet, View, Text, Button, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 
 import Color from '../Helpers/Color'
 
 class TaskItem extends React.Component {
+
+	constructor(props) {
+	  super(props);
+	
+	  this.state = {};
+	}
+
 	render() {
-		const { task, displayDetailForTask, sendTaskTo } = this.props
+		const { task, sendTaskTo, deleteTask } = this.props
 		return (
 			<TouchableOpacity style={styles.main_container} onPress={() => displayDetailForTask(task.id)}>
-				<TouchableOpacity onPress={() => sendTaskTo() }>
+				<TouchableOpacity onPress={() => sendTaskTo(task) }>
 	          		<Icon
 	          			name='ios-radio-button-off'
 	          			size={50}
@@ -20,6 +27,12 @@ class TaskItem extends React.Component {
 					<Text style={styles.title_text}>{task.title}</Text>
 					<Text style={styles.description_text}>{task.description}</Text>
 				</View>
+				<TouchableOpacity onPress={() => deleteTask(task) }>
+	          		<Icon
+	          			name='ios-close'
+	          			size={50}
+	          			color={Color.textColor} />
+      			</TouchableOpacity>
 			</TouchableOpacity>
 		)
 	}

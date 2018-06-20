@@ -8,13 +8,16 @@ import Color from '../Helpers/Color'
 
 import TaskList from './TaskList'
 
-
 class Live extends React.Component {
 
 	constructor(props) {
 	  super(props);
 	
-	  this.state = {};
+	  this.state = {
+	  	tasks: [],
+	  };
+  	  this._sendTaskTo = this._sendTaskTo.bind(this)
+	  this._deleteTask = this._deleteTask.bind(this)
 	}
 
 	_displayFloatingAddButton() {
@@ -32,12 +35,18 @@ class Live extends React.Component {
 		}
 	}
 
-	_sendTaskTo() {
-		
-	}
-
 	_displayAddTaskPopup() {
 		this.props.navigation.navigate('TaskDetail', { isNewTask: true })
+	}
+
+	_sendTaskTo(task) {
+		const action = { type: 'TOGGLE_TASK', value: task }
+		this.props.dispatch(action)
+	}
+
+	_deleteTask(task) {
+		const action = { type: 'DELETE_TASK', value: task }
+		this.props.dispatch(action)
 	}
 
 	render() {
@@ -46,8 +55,8 @@ class Live extends React.Component {
 				<TaskList
 					tasks={this.props.tasks}
 					navigation={this.props.navigation}
-					taskDone={false}				
-				/>
+					sendTaskTo={this._sendTaskTo}
+					deleteTask={this._deleteTask}/>
 				{this._displayFloatingAddButton()}
 			</View>
 		)
@@ -74,7 +83,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
 	return {
-		tasks: state.tasks
+		tasks: state.tasks.filter((item) => !item.isDone)
 	}
 }
 

@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation'
 
 import Live from '../Components/Live'
+import Done from '../Components/Done'
 import TaskDetail from '../Components/TaskDetail'
 
 import Color from '../Helpers/Color'
@@ -17,6 +18,16 @@ const LiveStackNavigator = createStackNavigator({
 	}
 })
 
+const DoneStackNavigator = createStackNavigator({
+	Done: {
+		screen: Done,
+	},
+	TaskDetail: {
+		screen: TaskDetail,
+	}
+})
+
+
 const ToDoTabNavigator = createBottomTabNavigator({
 	Live: {
 		screen: LiveStackNavigator,
@@ -24,8 +35,20 @@ const ToDoTabNavigator = createBottomTabNavigator({
 			tabBarIcon: ({ focused, tintColor }) => {
 				return (
 					focused ?
-					<Icon name='md-bookmark' size={30} color={tintColor} /> :
-					<Icon name='md-bookmark' size={30} color={Color.activeColor} />
+					<Icon name='md-bookmark' size={30} color={Color.activeColor} /> :
+					<Icon name='md-bookmark' size={30} color={tintColor} />
+				)
+			}
+		}
+	},
+	Done: {
+		screen: DoneStackNavigator,
+		navigationOptions: {
+			tabBarIcon: ({ focused, tintColor }) => {
+				return (
+					focused ?
+					<Icon name='md-archive' size={30} color={Color.activeColor} /> :
+					<Icon name='md-archive' size={30} color={tintColor} />
 				)
 			}
 		}
