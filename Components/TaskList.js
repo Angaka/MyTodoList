@@ -4,6 +4,7 @@ import { StyleSheet, FlatList } from 'react-native'
 import TaskItem from './TaskItem'
 
 class TaskList extends React.Component {
+
 	constructor(props) {
 	  super(props);
 	
@@ -19,7 +20,6 @@ class TaskList extends React.Component {
 
 	render() {
 		const { tasks, sendTaskTo, deleteTask } = this.props
-		console.log('tasks', this.props.tasks);
 		return (
 			<FlatList
 				style={styles.list_container}

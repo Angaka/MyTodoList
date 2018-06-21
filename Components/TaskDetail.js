@@ -9,48 +9,66 @@ import {
 	ActivityIndicator,
 	TouchableOpacity,
 	Platform
- } from 'react-native'
-
+} from 'react-native'
+import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Ionicons'
-
 import { connect } from 'react-redux'
 
-import uuidv1 from 'uuid/v1'
-
+import uniqueId from 'lodash.uniqueid'
 import Color from '../Helpers/Color'
 
 class TaskDetail extends React.Component {
 
 	static navigationOptions = ({ navigation }) => {
-		return {
-			title: navigation.getParam('otherParams', 'Add a new task')
+		const { params } = navigation.state
+
+		if (Platform.OS === 'ios') {
+			return {
+				title: params.title,
+				headerRight: <TouchableOpacity
+								onPress={() => params.addOrUpdateTask()}>
+				          		<Icon
+				          			name='ios-checkmark-outline'
+				          			size={45}
+				          			color={Color.textColor} />
+							</TouchableOpacity>
+			}
+		} else {
+			return {
+				title: params.title
+			}
 		}
 	}
 
 	constructor(props) {
 	  	super(props);
-	
-	  	const uuidOptions = {
-	  		msecs: new Date().getTime()
-	  	}
 	  	this.state = {
 	  		task: {
-		  		id: uuidv1(uuidOptions),
-				isDone: false
+		  		id: uniqueId(),
+				isDone: false,
+				title: '',
+				description: '',
   			},
 	  		isLoading: true,
+	  		showRequiredField: false,
 	  	};
+
+	  	this._addOrUpdateTask = this._addOrUpdateTask.bind(this)
 	}
 
 	componentDidMount() {
 		if (!this.props.navigation.state.params.isNewTask) {
 			const taskId = this.props.navigation.state.params.taskId
 			const taskIndex = this.props.tasks.findIndex((item) => item.id === taskId)
-			if (taskIndex !== 1) {
+			if (taskIndex !== -1) {
 				this.setState({	task: this.props.tasks[taskIndex] })
 			}
 		}
 		this.setState({ isLoading: false })
+		this.props.navigation.setParams({
+			title: this.props.navigation.state.params.isNewTask ? 'Add a new task' : 'Update this task',
+			addOrUpdateTask: this._addOrUpdateTask
+		})
 	}
 
 	_displayFloatingAddButton() {
@@ -66,69 +84,34 @@ class TaskDetail extends React.Component {
 	}
 
 	_addOrUpdateTask() {
-		// console.log('task : ', this.state.task);
-		const action = { type: 'TOGGLE_TASK', value: this.state.task }
-		this.props.dispatch(action)
+		if (this.state.task.title.trim()) {
+			const action = { type: 'TOGGLE_TASK', value: this.state.task }
+			this.props.dispatch(action)
+
+			this.props.navigation.goBack()
+		} else {
+			this.setState({
+				showRequiredField: true
+			})
+		}
 	}
 
 	_displayTask() {
-		if (!this.props.navigation.state.params.isNewTask) {
-			return (
-				<View>
-					<TextInput 
-						style={styles.title_text}
-						value={this.state.task.title}
-						placeholder='Enter a title here' 
-						underlineColorAndroid='rgba(0,0,0,0)'
-						multiline={true}
-						maxLength={80}
-						blurOnSubmit = {true}
-						onChangeText={(text) => this.setState({ task: {
-							...this.state.task,
-							title: text
-						}})}/>
-					<TextInput 
-						style={styles.description_text}
-						value={this.state.task.description}
-						placeholder='Enter a description here' 
-						underlineColorAndroid='rgba(0,0,0,0)'
-						multiline={true}
-						maxLength={140}
-						blurOnSubmit = {true}
-						onChangeText={(text) => this.setState({ task: {
-							...this.state.task,
-							description: text
-						}})}/>
-				</View>
-			)
-		} else {
-			return (
-				<View>
-					<TextInput 
-						style={styles.title_text} 
-						placeholder='Enter a title here' 
-						underlineColorAndroid='rgba(0,0,0,0)'
-						multiline={true}
-						maxLength={80}
-						blurOnSubmit = {true}
-						onChangeText={(text) => this.setState({ task: {
-							...this.state.task,
-							title: text
-						}})}/>
-					<TextInput 
-						style={styles.description_text}
-						placeholder='Enter a description here' 
-						underlineColorAndroid='rgba(0,0,0,0)'
-						multiline={true}
-						maxLength={140}
-						blurOnSubmit = {true}
-						onChangeText={(text) => this.setState({ task: {
-							...this.state.task,
-							description: text
-						}})}/>
-				</View>
-			)			
-		}
+		return (
+			<View>
+				<FormLabel>Title</FormLabel>
+				<FormInput onChangeText={(text) => this.setState({ task: {
+						...this.state.task,
+						title: text
+					}})}>{this.state.task.title}</FormInput>
+				{ this.state.showRequiredField ? <FormValidationMessage>Title is required</FormValidationMessage> : null }
+				<FormLabel>Description</FormLabel>
+				<FormInput onChangeText={(text) => this.setState({ task: {
+						...this.state.task,
+						description: text
+					}})}>{this.state.task.description}</FormInput>
+			</View>
+		)
 	}
 
 	_displayLoading() {
@@ -185,6 +168,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 30,
+		marginTop: 20,
 		height: 50,
 		backgroundColor: Color.activeColor,
 	},

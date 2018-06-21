@@ -6,16 +6,23 @@ function toggleTask(state = initialState, action) {
 
 	switch (action.type) {
 		case 'TOGGLE_TASK':
-			console.log('taskIndex', taskIndex, state.tasks);
 			if (taskIndex !== -1) {
 				nextState = {
 					...state,
-					tasks: state.tasks.map((item) => item.id === action.value.id ? {...item, isDone: !item.isDone} : item )
+					tasks: state.tasks.map((item) => item.id === action.value.id ? {...item, ...action.value} : item )
 				}
 			} else {
 				nextState = {
 					...state,
 					tasks: [...state.tasks, action.value]
+				}
+			}
+			return nextState || state
+		case 'SEND_TASK':
+			if (taskIndex !== -1) {
+				nextState = {
+					...state,
+					tasks: state.tasks.map((item) => item.id === action.value.id ? {...item, isDone: !item.isDone} : item )
 				}
 			}
 			return nextState || state

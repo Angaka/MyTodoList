@@ -4,11 +4,28 @@ import { connect } from 'react-redux'
 import { StyleSheet, View, Text, Image, TouchableOpacity, Platform } from 'react-native'
 
 import Icon from 'react-native-vector-icons/Ionicons'
+import Toast from 'react-native-easy-toast'
 import Color from '../Helpers/Color'
 
 import TaskList from './TaskList'
 
 class Live extends React.Component {
+
+	static navigationOptions = ({ navigation }) => {
+		const { params } = navigation.state
+
+		if (Platform.OS === 'ios') {
+			return {
+				headerRight: <TouchableOpacity
+								onPress={() => params.displayTaskDetail()}>
+				          		<Icon
+				          			name='ios-checkmark-outline'
+				          			size={45}
+				          			color={Color.textColor} />
+							</TouchableOpacity>
+			}
+		}
+	}
 
 	constructor(props) {
 	  super(props);
@@ -16,8 +33,15 @@ class Live extends React.Component {
 	  this.state = {
 	  	tasks: [],
 	  };
+	  this._displayTaskDetail = this._displayTaskDetail.bind(this)
   	  this._sendTaskTo = this._sendTaskTo.bind(this)
 	  this._deleteTask = this._deleteTask.bind(this)
+	}
+
+	componentDidMount() {
+		this.props.navigation.setParams({
+			displayTaskDetail: this._displayTaskDetail,
+		})
 	}
 
 	_displayFloatingAddButton() {
@@ -25,7 +49,7 @@ class Live extends React.Component {
 			return (
 				<TouchableOpacity
 	          		style={styles.touchable_floatingactionbutton}
-	          		onPress={() => this._displayAddTaskPopup()}>
+	          		onPress={() => this._displayTaskDetail()}>
 	          		<Icon
 	          			name='md-add'
 	          			size={30}
@@ -35,13 +59,15 @@ class Live extends React.Component {
 		}
 	}
 
-	_displayAddTaskPopup() {
+	_displayTaskDetail() {
 		this.props.navigation.navigate('TaskDetail', { isNewTask: true })
 	}
 
 	_sendTaskTo(task) {
-		const action = { type: 'TOGGLE_TASK', value: task }
-		this.props.dispatch(action)
+		this.refs.toast.show('Task moved to done', 500, () => {
+			const action = { type: 'SEND_TASK', value: task }
+			this.props.dispatch(action)
+		})
 	}
 
 	_deleteTask(task) {
@@ -58,6 +84,7 @@ class Live extends React.Component {
 					sendTaskTo={this._sendTaskTo}
 					deleteTask={this._deleteTask}/>
 				{this._displayFloatingAddButton()}
+				<Toast ref='toast' />
 			</View>
 		)
 	}

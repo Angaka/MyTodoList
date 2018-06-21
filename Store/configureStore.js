@@ -1,7 +1,12 @@
 import { createStore } from 'redux'
-import { combineReducer } from 'redux-persist'
+import { persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
 import toggleTask from './Reducers/taskReducer'
 
-export default createStore(toggleTask)
+const rootPersistConfig = {
+	key: 'root',
+	storage
+}
+
+export default createStore(persistReducer(rootPersistConfig, toggleTask))
